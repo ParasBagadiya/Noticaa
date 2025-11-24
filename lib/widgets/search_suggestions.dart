@@ -37,7 +37,7 @@ class SearchSuggestions extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
+                padding: EdgeInsets.symmetric(horizontal: 70),
                 child: Text(
                   'Type to find notes by title or content',
                   style: TextStyle(color: Colors.grey),
