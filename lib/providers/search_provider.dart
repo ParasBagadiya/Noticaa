@@ -21,7 +21,6 @@ class SearchProvider with ChangeNotifier {
     if (_searchHistory.length > _maxHistoryItems) {
       _searchHistory = _searchHistory.sublist(0, _maxHistoryItems);
     }
-
     notifyListeners();
   }
 
