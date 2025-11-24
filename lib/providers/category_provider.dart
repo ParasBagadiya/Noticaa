@@ -75,7 +75,6 @@ class CategoryProvider with ChangeNotifier {
     _categories.add(category);
     notifyListeners();
   }
-
   void removeCategory(String id) {
     _categories.removeWhere((category) => category.id == id);
     notifyListeners();
