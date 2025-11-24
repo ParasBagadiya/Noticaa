@@ -10,3 +10,4 @@ class AppConstants {
   static const String defaultNoteTitle = 'New Note';
   static const String defaultNoteContent = 'Start writing...';
 }
+//
