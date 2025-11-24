@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class AnimationService {
+  
   // Loading Animation
   static Widget loadingAnimation({double size = 100}) {
     return Lottie.network(
