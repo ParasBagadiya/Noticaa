@@ -28,10 +28,20 @@ class NoteProvider with ChangeNotifier {
         .toList();
   }
 
+  // Pinned notes getters
   List<NoteModel> get pinnedNotes =>
       filteredNotes.where((note) => note.isPinned).toList();
+
   List<NoteModel> get unpinnedNotes =>
       filteredNotes.where((note) => !note.isPinned).toList();
+
+  // Get all pinned notes (across all folders)
+  List<NoteModel> get allPinnedNotes =>
+      _notes.where((note) => note.isPinned).toList();
+
+  // Favorite notes getter
+  List<NoteModel> get favoriteNotes =>
+      _notes.where((note) => note.isFavorite).toList();
 
   // Get notes by folder
   List<NoteModel> getNotesByFolder(String folderId) {
@@ -45,6 +55,20 @@ class NoteProvider with ChangeNotifier {
       counts[note.folderId] = (counts[note.folderId] ?? 0) + 1;
     }
     return counts;
+  }
+
+  // Get sorted notes (pinned first, then by date)
+  List<NoteModel> get sortedNotes {
+    final pinned = pinnedNotes;
+    final unpinned = unpinnedNotes;
+
+    // Sort pinned notes by update date (newest first)
+    pinned.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    // Sort unpinned notes by update date (newest first)
+    unpinned.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    return [...pinned, ...unpinned];
   }
 
   NoteProvider() {
@@ -80,7 +104,22 @@ class NoteProvider with ChangeNotifier {
   Future<void> togglePin(String id) async {
     final index = _notes.indexWhere((note) => note.id == id);
     if (index != -1) {
-      _notes[index] = _notes[index].copyWith(isPinned: !_notes[index].isPinned);
+      _notes[index] = _notes[index].copyWith(
+        isPinned: !_notes[index].isPinned,
+        updatedAt: DateTime.now(),
+      );
+      await _storageService.saveNotes(_notes);
+      notifyListeners();
+    }
+  }
+
+  Future<void> toggleFavorite(String id) async {
+    final index = _notes.indexWhere((note) => note.id == id);
+    if (index != -1) {
+      _notes[index] = _notes[index].copyWith(
+        isFavorite: !_notes[index].isFavorite,
+        updatedAt: DateTime.now(),
+      );
       await _storageService.saveNotes(_notes);
       notifyListeners();
     }
