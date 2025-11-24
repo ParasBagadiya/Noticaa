@@ -21,13 +21,13 @@ class CategoryChip extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 4),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? category.color : category.color.withOpacity(0.1),
+          color: isSelected ? category.color : category.color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: category.color, width: isSelected ? 0 : 1),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: category.color.withOpacity(0.3),
+                    color: category.color.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: Offset(0, 2),
                   ),
