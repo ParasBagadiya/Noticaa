@@ -10,7 +10,7 @@ class Category {
   Category({
     required this.id,
     required this.name,
-    required this.color,
+    required this.color,// Add color
     required this.icon, // Add to constructor
   });
 
