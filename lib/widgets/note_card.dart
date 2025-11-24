@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:noticaa/models/note_model.dart';
@@ -25,184 +27,317 @@ class NoteCard extends StatelessWidget {
     final currentFolder = folderProvider.getFolderById(note.folderId);
 
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-      child: ListTile(
-        leading: IconButton(
-          icon: Icon(
-            note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-            color: note.isPinned ? Colors.blue : Colors.grey,
-          ),
-          onPressed: () {
-            Provider.of<NoteProvider>(
-              context,
-              listen: false,
-            ).togglePin(note.id);
-          },
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: note.isPinned
+              ? Border.all(color: Colors.amber, width: 2)
+              : null,
         ),
-        title: Text(
-          note.title.isEmpty ? 'Untitled' : note.title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontStyle: note.title.isEmpty ? FontStyle.italic : FontStyle.normal,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (note.content.isNotEmpty)
-              Text(note.content, maxLines: 2, overflow: TextOverflow.ellipsis),
-            SizedBox(height: 4),
-            // Use Wrap instead of Row to handle overflow gracefully
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              children: [
-                // Folder indicator
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: _buildPinButton(context),
+          title: Row(
+            children: [
+              if (note.isPinned)
                 Container(
+                  margin: EdgeInsets.only(right: 8),
                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: currentFolder.color.withOpacity(0.1),
+                    color: Colors.amber.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: currentFolder.color.withOpacity(0.3),
-                    ),
+                    border: Border.all(color: Colors.amber.withOpacity(0.3)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.folder_open,
-                        size: 12,
-                        color: currentFolder.color,
-                      ),
+                      Icon(Icons.push_pin, size: 12, color: Colors.amber),
                       SizedBox(width: 2),
                       Text(
-                        currentFolder.name.length > 8
-                            ? '${currentFolder.name.substring(0, 8)}...'
-                            : currentFolder.name,
+                        'Pinned',
                         style: TextStyle(
                           fontSize: 10,
-                          color: currentFolder.color,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.amber[700],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                // Format type indicator
-                if (note.formatType == 'rich')
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.green.withOpacity(0.3)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.text_format, size: 12, color: Colors.green),
-                        SizedBox(width: 2),
-                        Text(
-                          'Rich',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+              Expanded(
+                child: Text(
+                  note.title.isEmpty ? 'Untitled' : note.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontStyle: note.title.isEmpty
+                        ? FontStyle.italic
+                        : FontStyle.normal,
                   ),
-
-                // Category indicator
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: category.color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: category.color.withOpacity(0.3)),
-                  ),
-                  child: Text(
-                    category.name.length > 8
-                        ? '${category.name.substring(0, 8)}...'
-                        : category.name,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: category.color,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-
-                // Date - always show
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  child: Text(
-                    _formatDate(note.updatedAt),
-                    style: TextStyle(fontSize: 10, color: Colors.grey),
-                  ),
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (note.content.isNotEmpty)
+                Text(
+                  note.content,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13),
                 ),
-              ],
-            ),
-          ],
-        ),
-        onTap: () {
-          // Navigate to appropriate editor based on format type
-          if (note.formatType == 'rich') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RichTextEditorScreen(note: note),
+              SizedBox(height: 6),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  _buildFolderIndicator(currentFolder),
+                  if (note.formatType == 'rich') _buildRichTextIndicator(),
+                  _buildCategoryIndicator(),
+                  if (note.isFavorite) _buildFavoriteIndicator(),
+                  _buildDateIndicator(),
+                ],
               ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NoteEditorScreen(note: note),
-              ),
-            );
-          }
-        },
-        trailing: PopupMenuButton<String>(
-          icon: Icon(Icons.more_vert, color: Colors.grey),
-          onSelected: (value) {
-            if (value == 'delete') {
-              _showDeleteDialog(context);
-            } else if (value == 'move' && onMoveToFolder != null) {
-              onMoveToFolder!(note.id);
-            }
+            ],
+          ),
+          trailing: _buildMoreButton(context),
+          onTap: () {
+            _navigateToEditor(context);
           },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'move',
-              child: Row(
-                children: [
-                  Icon(Icons.folder, color: Colors.blue),
-                  SizedBox(width: 8),
-                  Text('Move to Folder'),
-                ],
-              ),
-            ),
-            PopupMenuDivider(),
-            PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Delete'),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
+  }
+
+  Widget _buildPinButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Provider.of<NoteProvider>(context, listen: false).togglePin(note.id);
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: note.isPinned
+              ? Colors.amber.withOpacity(0.1)
+              : Colors.grey.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          note.isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+          color: note.isPinned ? Colors.amber : Colors.grey,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFolderIndicator(dynamic folder) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: folder.color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: folder.color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.folder_open, size: 12, color: folder.color),
+          SizedBox(width: 2),
+          Text(
+            folder.name.length > 8
+                ? '${folder.name.substring(0, 8)}...'
+                : folder.name,
+            style: TextStyle(
+              fontSize: 10,
+              color: folder.color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRichTextIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.green.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.text_format, size: 12, color: Colors.green),
+          SizedBox(width: 2),
+          Text(
+            'Rich',
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.green,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCategoryIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: category.color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: category.color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        category.name.length > 8
+            ? '${category.name.substring(0, 8)}...'
+            : category.name,
+        style: TextStyle(
+          fontSize: 10,
+          color: category.color,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFavoriteIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.red.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.favorite, size: 12, color: Colors.red),
+          SizedBox(width: 2),
+          Text(
+            'Favorite',
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.red,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: Text(
+        _formatDate(note.updatedAt),
+        style: TextStyle(fontSize: 10, color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildMoreButton(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert, color: Colors.grey, size: 20),
+      onSelected: (value) => _handleMenuSelection(value, context),
+      itemBuilder: (context) => [
+        // PopupMenuItem(
+        //   value: 'pin',
+        //   child: Row(
+        //     children: [
+        //       Icon(
+        //         note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+        //         color: Colors.amber,
+        //       ),
+        //       SizedBox(width: 8),
+        //       Text(note.isPinned ? 'Unpin Note' : 'Pin Note'),
+        //     ],
+        //   ),
+        // ),
+        PopupMenuItem(
+          value: 'favorite',
+          child: Row(
+            children: [
+              Icon(
+                note.isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              ),
+              SizedBox(width: 8),
+              Text(note.isFavorite ? 'Remove Favorite' : 'Add to Favorites'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'move',
+          child: Row(
+            children: [
+              Icon(Icons.folder, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Move to Folder'),
+            ],
+          ),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Delete'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _handleMenuSelection(String value, BuildContext context) {
+    switch (value) {
+      case 'pin':
+        Provider.of<NoteProvider>(context, listen: false).togglePin(note.id);
+        break;
+      case 'favorite':
+        Provider.of<NoteProvider>(
+          context,
+          listen: false,
+        ).toggleFavorite(note.id);
+        break;
+      case 'move':
+        if (onMoveToFolder != null) onMoveToFolder!(note.id);
+        break;
+      case 'delete':
+        _showDeleteDialog(context);
+        break;
+    }
+  }
+
+  void _navigateToEditor(BuildContext context) {
+    if (note.formatType == 'rich') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RichTextEditorScreen(note: note),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NoteEditorScreen(note: note)),
+      );
+    }
   }
 
   String _formatDate(DateTime date) {
@@ -214,7 +349,7 @@ class NoteCard extends StatelessWidget {
     } else if (difference.inDays == 1) {
       return 'Yesterday';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays}d ago';
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
