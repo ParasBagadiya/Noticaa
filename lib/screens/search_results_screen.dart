@@ -26,6 +26,7 @@ class SearchResultsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          
           // Search Summary
           Container(
             padding: EdgeInsets.all(16),
@@ -49,6 +50,7 @@ class SearchResultsScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
+
           // Search Results
           Expanded(
             child: searchResults.isEmpty
