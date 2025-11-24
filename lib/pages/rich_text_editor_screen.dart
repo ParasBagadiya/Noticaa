@@ -7,9 +7,10 @@ import 'package:noticaa/providers/theme_provider.dart';
 class RichTextEditorScreen extends StatefulWidget {
   final NoteModel note;
 
-  const RichTextEditorScreen({Key? key, required this.note}) : super(key: key);
+  const RichTextEditorScreen({super.key, required this.note});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RichTextEditorScreenState createState() => _RichTextEditorScreenState();
 }
 
