@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:noticaa/models/note_model.dart';
@@ -10,12 +12,13 @@ class NoteEditorScreen extends StatefulWidget {
   const NoteEditorScreen({super.key, required this.note});
 
   @override
+  // ignore: library_private_types_in_public_api
   _NoteEditorScreenState createState() => _NoteEditorScreenState();
 }
 
 class _NoteEditorScreenState extends State<NoteEditorScreen> {
-  late TextEditingController _titleController;
-  late TextEditingController _contentController;
+  late TextEditingController _titleController = TextEditingController();
+  late TextEditingController _contentController = TextEditingController();
   bool _isBold = false;
   bool _isItalic = false;
 
@@ -104,36 +107,36 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       body: Column(
         children: [
           // Formatting Toolbar
-          Container(
-            height: 50,
-            color: themeProvider.isDarkMode
-                ? Colors.grey[800]
-                : Colors.grey[100],
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.format_bold,
-                    color: _isBold ? Colors.blue : Colors.grey,
-                  ),
-                  onPressed: _toggleBold,
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.format_italic,
-                    color: _isItalic ? Colors.blue : Colors.grey,
-                  ),
-                  onPressed: _toggleItalic,
-                ),
-                IconButton(
-                  icon: Icon(Icons.format_list_bulleted),
-                  onPressed: () {
-                    // Add list functionality
-                  },
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 50,
+          //   color: themeProvider.isDarkMode
+          //       ? Colors.grey[800]
+          //       : Colors.grey[100],
+          //   child: Row(
+          //     children: [
+          //       IconButton(
+          //         icon: Icon(
+          //           Icons.format_bold,
+          //           color: _isBold ? Colors.blue : Colors.grey,
+          //         ),
+          //         onPressed: _toggleBold,
+          //       ),
+          //       IconButton(
+          //         icon: Icon(
+          //           Icons.format_italic,
+          //           color: _isItalic ? Colors.blue : Colors.grey,
+          //         ),
+          //         onPressed: _toggleItalic,
+          //       ),
+          //       IconButton(
+          //         icon: Icon(Icons.format_list_bulleted),
+          //         onPressed: () {
+          //           // Add list functionality
+          //         },
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(16),
