@@ -21,7 +21,7 @@ class FolderCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(4),
       color: isSelected
-          ? folder.color.withOpacity(0.2)
+          ? folder.color.withValues(alpha: 0.1)
           : Theme.of(context).cardColor,
       child: InkWell(
         onTap: () {

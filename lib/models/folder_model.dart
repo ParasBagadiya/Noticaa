@@ -22,7 +22,7 @@ class Folder {
       'id': id,
       'name': name,
       'parentId': parentId,
-      'color': color.value,
+      'color': color.toARGB32(),
       'createdAt': createdAt.millisecondsSinceEpoch,
       'noteCount': noteCount,
     };

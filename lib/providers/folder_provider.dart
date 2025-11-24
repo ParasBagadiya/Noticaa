@@ -7,8 +7,7 @@ class FolderProvider with ChangeNotifier {
   final StorageService _storageService = StorageService();
 
   List<Folder> get folders => _folders;
-  List<Folder> get rootFolders =>
-      _folders.where((folder) => folder.parentId == null).toList();
+  List<Folder> get rootFolders =>_folders.where((folder) => folder.parentId == null).toList();
 
   FolderProvider() {
     loadFolders();

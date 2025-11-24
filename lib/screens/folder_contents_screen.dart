@@ -79,7 +79,9 @@ class FolderContentsScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: folder.color.withOpacity(0.1),
+                color: folder.color.withValues(
+                  alpha: 0.2,
+                ), // Adjust alpha value as needed,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -156,7 +158,6 @@ class FolderContentsScreen extends StatelessWidget {
       content: 'Start writing...',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      isPinned: false,
       categoryId: 'default',
       folderId: folderId,
       formatType: 'plain',
@@ -178,7 +179,6 @@ class FolderContentsScreen extends StatelessWidget {
       content: 'Start writing with formatting...',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      isPinned: false,
       categoryId: 'default',
       folderId: folderId,
       formatType: 'rich',

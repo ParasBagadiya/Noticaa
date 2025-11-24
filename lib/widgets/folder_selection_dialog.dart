@@ -54,7 +54,7 @@ class FolderSelectionDialog extends StatelessWidget {
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 4),
                     color: isCurrentFolder
-                        ? Colors.blue.withOpacity(0.1)
+                        ? Colors.blue.withValues(alpha: 0.1)
                         : null,
                     child: ListTile(
                       leading: Icon(Icons.folder, color: folder.color),
