@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noticaa/screens/favorites_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:noticaa/models/note_model.dart';
 import 'package:noticaa/models/folder_model.dart';
@@ -19,11 +20,13 @@ import 'package:noticaa/widgets/folder_selection_dialog.dart';
 import 'package:noticaa/pages/note_editor_screen.dart';
 import 'package:noticaa/pages/rich_text_editor_screen.dart';
 import 'package:noticaa/screens/search_results_screen.dart';
+import 'package:noticaa/screens/pinned_notes_screen.dart';
 import 'package:noticaa/services/animation_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -438,6 +441,26 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : Text(_showFolders ? 'Folders' : 'Notes'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.push_pin_rounded),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PinnedNotesScreen()),
+              );
+            },
+            tooltip: 'Pinned Notes',
+          ),
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FavoritesScreen()),
+              );
+            },
+            tooltip: 'Favorite Notes',
+          ),
           // View Toggle Button
           IconButton(
             icon: Icon(
@@ -589,8 +612,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: currentFolder.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: currentFolder.color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.folder_rounded,
@@ -630,10 +653,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Category Chips
         SizedBox(
-          height: 70,
+          height: 60,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             itemCount: categoryProvider.categories.length,
             itemBuilder: (context, index) {
               final category = categoryProvider.categories[index];
@@ -650,6 +673,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Divider(height: 1),
 
         // Notes List
+        SizedBox(height: 5),
         Expanded(
           child: Consumer<NoteProvider>(
             builder: (context, noteProvider, child) {
@@ -687,9 +711,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                itemCount: notes.length,
+                itemCount: noteProvider
+                    .sortedNotes
+                    .length, // Use sortedNotes instead of filteredNotes
                 itemBuilder: (context, index) {
-                  final note = notes[index];
+                  final note = noteProvider.sortedNotes[index];
                   final category = categoryProvider.getCategoryById(
                     note.categoryId,
                   );
@@ -745,7 +771,6 @@ class _HomeScreenState extends State<HomeScreen> {
       content: 'Start writing...',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      isPinned: false,
       categoryId: noteProvider.currentCategory,
       folderId: noteProvider.currentFolder,
       formatType: 'plain',
@@ -767,7 +792,6 @@ class _HomeScreenState extends State<HomeScreen> {
       content: 'Start writing with formatting...',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      isPinned: false,
       categoryId: noteProvider.currentCategory,
       folderId: noteProvider.currentFolder,
       formatType: 'rich',
