@@ -8,6 +8,7 @@ class StorageService {
   static const String _notesKey = 'notes_data';
   static const String _foldersKey = 'folders_data';
 
+
   Future<List<NoteModel>> loadNotes() async {
     try {
       final prefs = await SharedPreferences.getInstance();
